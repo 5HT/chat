@@ -2,6 +2,16 @@ CHAT: Messaging Protocol
 ========================
 [![Build Status](https://travis-ci.org/synrc/chat.svg?branch=master)](https://travis-ci.org/synrc/chat)
 
+Features
+--------
+
+* Database Support: FS, MNESIA, ROCKSDB
+* MQ Support: GPROC, SYN
+* Formatters Support: BERT, JSON, TEXT
+
+Intro
+-----
+
 CHAT is an QoS=1 example of messaging system built on top of:
 
 * SYN for publish subscribe message queue;
