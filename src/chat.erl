@@ -7,12 +7,12 @@
 -include_lib("kvx/include/metainfo.hrl").
 -compile(export_all).
 
+init(Req, Opts) -> {ok, Req, Opts}.
+
 endpoints() ->
-    Static = {dir, n2o_cowboy:fix1(code:priv_dir(application:get_env(n2o,app,chat)))++"/static", []},
+    Static = {dir, n2o_cowboy:fix1(code:priv_dir(?MODULE))++"/static", []},
     cowboy_router:compile([{'_', [
         {"/", ?MODULE, []},
-        {"/ws/[...]", n2o_cowboy2, []},
-        {"/n2o/[...]", cowboy_static, {dir, n2o_cowboy:fix2(code:priv_dir(n2o)), []}},
         {"/app/[...]", cowboy_static, Static},
         {"/[...]", cowboy_static, Static}]}]).
 
