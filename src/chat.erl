@@ -10,8 +10,10 @@
 init(Req, Opts) -> {ok, Req, Opts}.
 
 endpoints() ->
-    cowboy_router:compile([{'_', [{"/", ?MODULE, []}, {"/[...]", cowboy_static,
-        {dir, n2o_cowboy:fix1(code:priv_dir(?MODULE))++"/static", []}}]}]).
+    S = {dir, n2o_cowboy:fix1(code:priv_dir(?MODULE))++"/static", []},
+    cowboy_router:compile([{'_', [{"/", ?MODULE, []},
+        {"/app/[...]", cowboy_static, S},
+        {"/[...]", cowboy_static, S}]}]).
 
 stop(_)    -> ok.
 start()    -> start(normal,[]).
