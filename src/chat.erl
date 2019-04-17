@@ -7,10 +7,6 @@
 -include_lib("kvx/include/metainfo.hrl").
 -compile(export_all).
 
-init(Req, Opts) ->
-    Body = <<"<script>window.location = 'https://chat.n2o.space';</script> Reticulating splines...">>,
-    {ok, cowboy_req:reply(200, #{}, [Body, "\n"], Req), Opts}.
-
 endpoints() ->
     Static = {dir, n2o_cowboy:fix1(code:priv_dir(application:get_env(n2o,app,chat)))++"/static", []},
     cowboy_router:compile([{'_', [
