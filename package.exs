@@ -5,8 +5,8 @@ defmodule CHAT.Mixfile do
     [app: :roster,
      version: "3.4.0",
      description: "CHAT Protocol",
-     package: package,
-     deps: deps]
+     package: package(),
+     deps: deps()]
   end
 
   def application do
