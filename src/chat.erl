@@ -30,7 +30,6 @@ start(_,_) -> X = supervisor:start_link({local,?MODULE},?MODULE,[]),
                                  sup=?MODULE,state=[],name={server,Pos}})
                 || {{_,_},Pos} <- lists:zip(n2o:ring(),lists:seq(1,length(n2o:ring()))) ],
               X.
-points()   -> cowboy_router:compile([{'_', [{"/[...]",n2o_cowboy2,[] } ]}]).
 port()     -> application:get_env(n2o,port,8042).
 init([])   -> {ok, {{one_for_one, 5, 10}, [ ] }}.
 metainfo() -> #schema { name=roster, tables=[
