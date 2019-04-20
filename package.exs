@@ -2,7 +2,7 @@ defmodule CHAT.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :roster,
+    [app: :chat,
      version: "3.4.0",
      description: "CHAT Protocol",
      package: package(),
@@ -10,7 +10,7 @@ defmodule CHAT.Mixfile do
   end
 
   def application do
-    [mod: {:chat, []}]
+     [mod: {:chat, []}, applications: [:n2o, :kvx]]
   end
 
   defp package do
@@ -22,6 +22,10 @@ defmodule CHAT.Mixfile do
   end
 
   defp deps do
-     [{:ex_doc, ">= 0.0.0", only: :dev}]
+     [{:syn,    github: "ostinelli/syn", tag: "1.5.0"},
+      {:cowboy, github: "voxoz/cowboy2", override: :true},
+      {:kvx,    github: "synrc/kvx", override: :true},
+      {:n2o,    github: "synrc/n2o", override: :true},
+      {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 end
