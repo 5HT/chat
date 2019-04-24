@@ -1,5 +1,5 @@
 -module(chat).
--copyright('2014—2019 (c) Synrc Research Center').
+-copyright('2014-2019 (c) Synrc Research Center').
 -behaviour(application).
 -behaviour(supervisor).
 -include("message.hrl").

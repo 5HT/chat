@@ -1,5 +1,5 @@
 -module(chat_client).
--copyright('2014—2019 (c) Synrc Research Center').
+-copyright('2014-2019 (c) Synrc Research Center').
 -include("message.hrl").
 -include_lib("kvx/include/cursors.hrl").
 -include_lib("n2o/include/n2o.hrl").
