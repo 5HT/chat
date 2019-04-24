@@ -47,7 +47,9 @@ info({text,<<"HLP">>},R,S) -> % erase the feed by SEEN command
 info({text,<<"CUT",X/binary>>},R,S) -> % erase the feed by SEEN command
    C  = string:trim(binary_to_list(X)),
    _R = case string:tokens(C," ") of
-        [_From,_To,Id] -> {reply,{text,<<"ERASED ",(bin(Id))/binary>>},R,S};
+        [From,To,Id] -> case kvx:cut({p2p,From,To},Id) of
+                             {ok,Count} -> {reply,{text,<<"ERASED ",(bin(Count))/binary>>},R,S};
+                             {error,_} -> {reply,{text,<<"NOT FOUND ">>},R,S} end;
                    _ -> {reply,{text,<<"ERROR in request.">>},R,S} end;
 
 info({flush,#'Message'{}=M},R,S)  -> {reply, {text,<<"NOTIFY ",(list_to_binary(format_msg(M)))/binary>>},R,S};
