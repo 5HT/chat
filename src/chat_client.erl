@@ -5,13 +5,12 @@
 -compile(export_all).
 
 info({text,<<"N2O",X/binary>>},R,S) -> % auth
-   Str = string:trim(binary_to_list(X)),
-   n2o:reg({client,Str}),
-   A = list_to_binary(Str),
+   A = string:trim(binary_to_list(X)),
+   n2o:reg({client,A}),
    case kvx:get(writer,A) of
         {error,_} -> kvx:save(kvx:writer(A));
-        {ok,_} -> skip end,
-   {reply,{text,<<(list_to_binary("USER " ++ Str))/binary>>},R,S#cx{session = Str}};
+           {ok,_} -> skip end,
+    {reply,{text,<<(list_to_binary("USER " ++ A))/binary>>},R,S#cx{session = A}};
 
 info({text,<<"SEND",_/binary>>},R,#cx{session = []}=S) ->
    {reply, {text, <<"Please login with N2O. Try HELP.">>},R,S};
