@@ -23,49 +23,48 @@ It also contains simple textual WebSocket protocol for debugging purposes.
 You can freely use this example with your favourite formatter for user terminal protocol.
 
 ```shell
-$ wscat --no-check -c https://localhost:8042
-connected (press CTRL+C to quit)
-> N2O,3
-< USER 3
-> N2O,5
-< USER 5
-> MSG 3 5 0 HELO
-< SENT 1555353999252659000
-< ACK 1555353999252659000
-> MSG 3 5 0 KITTY
-< SENT 1555354008545233000
-< ACK 1555354008545233000
-> MSG 3 5 QoS=1 BYE 
-< SENT "QoS=1"
-< ACK "QoS=1"
-> MSG 3 5 QoS=1 BYE 
-< SENT "QoS=1"
-< ACK "QoS=1"
-> HIST 3 5
-< History:
-3:5:HELO
-3:5:KITTY
-3:5:BYE
-```
-
-```erlang
-> kvx:all({p2p,"3","5"}).
-[{'Message',"QoS=1",[],"3","5",
-            [{'File',[],<<"text">>,"BYE",[],[]}],
-            [],[],[]},
- {'Message',1555353999252659000,[],"3","5",
-            [{'File',[],<<"text">>,"HELO",[],[]}],
-            [],[],[]},
- {'Message',1555354008545233000,[],"3","5",
-            [{'File',[],<<"text">>,"KITTY",[],[]}],
-            [],[],[]}]
+$ wscat -c wss://n2o.im
+> HELP
+< N2O <user>
+| SEND <user> <msg>
+| BOX
+| CUT <id>.
+> N2O maxim
+< USER maxim
+> SEND vlad HELO
+< ERROR user doesn't exist.
+> N2O vlad
+< USER vlad
+> SEND maxim OK
+< NOTIFY vlad:maxim:1556151953113322286:OK
+< ACK "1556151953113322286"
+> N2O maxim
+< USER maxim
+> BOX
+< LIST
+vlad:maxim:1556151953113322286:OK
+> SEND maxim this is me
+< NOTIFY maxim:maxim:1556152151055371152:this is me
+< ACK "1556152151055371152"
+> SEND maxim back again
+< NOTIFY maxim:maxim:1556152157283311935:back again
+< ACK "1556152157283311935"
+> BOX
+< LIST
+vlad:maxim:1556151953113322286:OK
+maxim:maxim:1556152151055371152:this is me
+maxim:maxim:1556152157283311935:back again
+> CUT 1556152157283311935
+< ERASED 3
+> BOX
+< LIST
+>
 ```
 
 Documentation
 -------------
 
 The project homepage is <a href="https://n2o.im">n2o.im</a>.
-The documentation on stack is in header and by the following address <a href="https://o7.n2o.space">o7.n2o.space</a>.
 
 Credits
 -------
