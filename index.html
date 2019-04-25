@@ -69,34 +69,41 @@
      </p>
     <figure><code>
  $ wscat -c wss://n2o.im
- connected (press CTRL+C to quit)
- > HLP
- < N2O <user>
- | SEND <user> <msg>
+ > HELP
+ < N2O &lt;user&gt;
+ | SEND &lt;user&gt; &lt;msg&gt;
  | BOX
- | CUT <id>.
+ | CUT &lt;id&gt;.
  > N2O maxim
  < USER maxim
  > SEND vlad HELO
- < ERR user doesn't exist.
+ < ERROR user doesn't exist.
  > N2O vlad
  < USER vlad
- > SEND vlad HELO
- <
- < NOTIFY vlad:vlad:1556151347689164006:HELO
- < ACK "1556151347689164006"
- > BOX
- < LIST
- vlad:vlad:1556151347689164006:HELO
- > SEND maxim HELO
- <
- < NOTIFY vlad:maxim:1556151355731244849:HELO
- < ACK "1556151355731244849"
+ > SEND maxim OK
+ < NOTIFY vlad:maxim:1556151953113322286:OK
+ < ACK "1556151953113322286"
  > N2O maxim
  < USER maxim
  > BOX
  < LIST
- vlad:maxim:1556151355731244849:HELO
+ vlad:maxim:1556151953113322286:OK
+ > SEND maxim this is me
+ < NOTIFY maxim:maxim:1556152151055371152:this is me
+ < ACK "1556152151055371152"
+ > SEND maxim back again
+ < NOTIFY maxim:maxim:1556152157283311935:back again
+ < ACK "1556152157283311935"
+ > BOX
+ < LIST
+ vlad:maxim:1556151953113322286:OK
+ maxim:maxim:1556152151055371152:this is me
+ maxim:maxim:1556152157283311935:back again
+ > CUT 1556152157283311935
+ < ERASED 3
+ > BOX
+ < LIST
+ >
     </code></figure>
     </section>
 
@@ -104,18 +111,6 @@
        <h3>ERLANG</h3>
        <p>CHAT supports <a href="https://rocksdb.org">RocksDB</a> and <a href="http://erlang.org/doc/man/mnesia.html">Mnesia</a> databases.
           KVX differs in writing feeds to them so both cases are covered in the example.</p>
-       <figure><code>
- > kvx:all({p2p,"3","5"}).
- [{'Message',"QoS=1",[],[],[],"3","5",
-             [{'File',[],<<"text">>,"BYE",[],[]}],
-             [],[],[]},
-  {'Message',"1555430866970405323",[],[],[],"3","5",
-             [{'File',[],<<"text">>,"HELO",[],[]}],
-             [],[],[]},
-  {'Message',"1555430873158862112",[],[],[],"3","5",
-             [{'File',[],<<"text">>,"KITTY",[],[]}],
-             [],[],[]}]
-       </code></figure>
     </section>
 
     <section>
