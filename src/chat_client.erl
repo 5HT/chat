@@ -14,6 +14,7 @@ info({text,<<"N2O",X/binary>>},R,S) -> % auth
         {ok,_} -> skip end,
    {reply,{text,<<(list_to_binary("USER " ++ Str))/binary>>},R,S#cx{session = Str}};
 
+info({text,<<"SEND",X/binary>>},R,#cx{session = []}=S) -> {reply, {text, <<"Please login with N2O. Try HELP.">>},R,S};
 info({text,<<"SEND",X/binary>>},R,#cx{session = From}=S) -> % send message
    C  = string:trim(binary_to_list(X)),
    case string:tokens(C," ") of
@@ -21,7 +22,7 @@ info({text,<<"SEND",X/binary>>},R,#cx{session = From}=S) -> % send message
            Key = kvx:seq([],[]),
            Msg = #'Message'{id=Key,from=From,to=To,files=[#'File'{payload=string:join(Rest," ")}]},
            Res = case user(To) of
-                 false -> <<"ERR user doesn't exist.">>;
+                 false -> <<"ERROR user doesn't exist.">>;
                  true  -> % here is feed consistency happens
                           {ring,N} = n2o_ring:lookup(To),
                           n2o:send({server,N},{publish,self(),From,Msg}),
@@ -35,7 +36,7 @@ info({text,<<"BOX">>},R,#cx{session = From}=S) -> % print the feed
    Res = "LIST\n" ++ string:join([ format_msg(M) || M <- lists:reverse(Fetch) ],"\n"),
    {reply,{text,<<(list_to_binary(Res))/binary>>},R,S};
 
-info({text,<<"HLP">>},R,S) -> % erase the feed by SEEN command
+info({text,<<"HELP">>},R,S) -> % erase the feed by SEEN command
    {reply, {text,<<"N2O <user>\n| SEND <user> <msg>\n| BOX\n| CUT <id>.">>},R,S};
 
 info({text,<<"CUT",X/binary>>},R,#cx{session = From}=S) -> % erase the feed by SEEN command
@@ -49,7 +50,7 @@ info({text,<<"CUT",X/binary>>},R,#cx{session = From}=S) -> % erase the feed by S
 info({flush,#'Message'{}=M},R,S)  -> {reply, {text,<<"NOTIFY ",(list_to_binary(format_msg(M)))/binary>>},R,S};
 info(#'Ack'{id=Key}, R,S) -> {reply, {text,<<"ACK ",(bin(Key))/binary>>},R,S};
 info({flush,Text},R,S)    -> {reply, {text,Text},R,S};
-info({text,_}, R,S)       -> {reply, {text,<<"Try HLP">>},R,S};
+info({text,_}, R,S)       -> {reply, {text,<<"Try HELP">>},R,S};
 info(Msg, R,S)            -> {unknown,Msg,R,S}.
 
 bin(Key) -> list_to_binary(io_lib:format("~p",[Key])).
