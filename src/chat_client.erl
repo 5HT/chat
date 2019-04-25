@@ -12,45 +12,39 @@ info({text,<<"N2O",X/binary>>},R,S) -> % auth
    case kvx:get(writer,A) of
         {error,_} -> kvx:save(kvx:writer(A));
         {ok,_} -> skip end,
-   {reply,{text,<<"USER ",A/binary>>},R,S#cx{session = A}};
+   {reply,{text,<<(list_to_binary("USER " ++ Str))/binary>>},R,S#cx{session = Str}};
 
-info({text,<<"SAY",X/binary>>},R,#cx{session = Sid}=S) -> % send message
+info({text,<<"SEND",X/binary>>},R,#cx{session = From}=S) -> % send message
    C  = string:trim(binary_to_list(X)),
    case string:tokens(C," ") of
-        [From,To,Id|Rest] ->
-           Key = case Id of "0" -> kvx:seq([],[]); I -> I end,
+        [To|Rest] ->
+           Key = kvx:seq([],[]),
            Msg = #'Message'{id=Key,from=From,to=To,files=[#'File'{payload=string:join(Rest," ")}]},
-           Res = case user(From) andalso user(To) of
+           Res = case user(To) of
                  false -> <<"ERR user doesn't exist.">>;
                  true  -> % here is feed consistency happens
-                          {ring,N} = n2o_ring:lookup({p2p,From,To}),
-                          n2o:send({server,N},{publish,self(),Sid,Msg}),
+                          {ring,N} = n2o_ring:lookup(To),
+                          n2o:send({server,N},{publish,self(),From,Msg}),
                           <<>> end,
             {reply, {text, Res},R,S};
        _ -> {reply, {text, <<"ERROR in request.">>},R,S} end;
 
-info({text,<<"LOG",X/binary>>},R,S) -> % print the feed
-   C  = string:trim(binary_to_list(X)),
-   case string:tokens(C," ") of
-        [From,To] -> % we could perform database retrivals directly in WebSocket channel
-           Key = chat:key({p2p,From,To}),
-           kvx:ensure(#writer{id=Key}),
-           Fetch = (kvx:take((kvx:reader(Key))#reader{args=-1}))#reader.args,
-           Res = string:join([ format_msg(M) || M <- Fetch ],"\n"),
-           {reply,{text,<<(list_to_binary(format_chat(Key)))/binary,
-                          (list_to_binary(Res))/binary>>},R,S};
-      _ -> {reply,{text,<<"ERROR in request.">>},R,S} end;
+info({text,<<"BOX">>},R,#cx{session = From}=S) -> % print the feed
+   kvx:ensure(#writer{id=From}),
+   Fetch = (kvx:take((kvx:reader(From))#reader{args=-1}))#reader.args,
+   Res = "LIST\n" ++ string:join([ format_msg(M) || M <- lists:reverse(Fetch) ],"\n"),
+   {reply,{text,<<(list_to_binary(Res))/binary>>},R,S};
 
 info({text,<<"HLP">>},R,S) -> % erase the feed by SEEN command
    {reply, {text,<<"N2O <bin>\n| SAY <from> <to> <0|key> <msg>\n| LOG <from> <to>\n| CUT <id>.">>},R,S};
 
-info({text,<<"CUT",X/binary>>},R,S) -> % erase the feed by SEEN command
+info({text,<<"CUT",X/binary>>},R,#cx{session = From}=S) -> % erase the feed by SEEN command
    C  = string:trim(binary_to_list(X)),
-   _R = case string:tokens(C," ") of
-        [From,To,Id] -> case kvx:cut({p2p,From,To},Id) of
+   _  = case string:tokens(C," ") of
+        [Id] -> case kvx:cut(From,Id) of
                              {ok,Count} -> {reply,{text,<<"ERASED ",(bin(Count))/binary>>},R,S};
-                             {error,_} -> {reply,{text,<<"NOT FOUND ">>},R,S} end;
-                   _ -> {reply,{text,<<"ERROR in request.">>},R,S} end;
+                              {error,_} -> {reply,{text,<<"NOT FOUND ">>},R,S} end;
+                                      _ -> {reply,{text,<<"ERROR in request.">>},R,S} end;
 
 info({flush,#'Message'{}=M},R,S)  -> {reply, {text,<<"NOTIFY ",(list_to_binary(format_msg(M)))/binary>>},R,S};
 info(#'Ack'{id=Key}, R,S) -> {reply, {text,<<"ACK ",(bin(Key))/binary>>},R,S};
@@ -59,7 +53,6 @@ info({text,_}, R,S)       -> {reply, {text,<<"Try HLP">>},R,S};
 info(Msg, R,S)            -> {unknown,Msg,R,S}.
 
 bin(Key) -> list_to_binary(io_lib:format("~p",[Key])).
-format_chat({p2p,From,To}) -> io_lib:format("CHAT ~s ~s~n",[From,To]).
 user(Id) -> case kvx:get(writer,n2o:to_binary(Id)) of {ok,_} -> true; {error,_} -> false end.
 
 format_msg(#'Message'{id=Id,from=From,to=To,files=Files}) ->
