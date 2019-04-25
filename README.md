@@ -2,6 +2,8 @@ CHAT: Messaging Protocol
 ========================
 [![Build Status](https://travis-ci.org/synrc/chat.svg?branch=master)](https://travis-ci.org/synrc/chat)
 
+TXT CHAT is reimplementation of mail delivery protocol by SYNRC.
+
 Features
 --------
 
