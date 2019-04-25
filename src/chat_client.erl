@@ -36,7 +36,7 @@ info({text,<<"BOX">>},R,#cx{session = From}=S) -> % print the feed
    {reply,{text,<<(list_to_binary(Res))/binary>>},R,S};
 
 info({text,<<"HLP">>},R,S) -> % erase the feed by SEEN command
-   {reply, {text,<<"N2O <bin>\n| SAY <from> <to> <0|key> <msg>\n| LOG <from> <to>\n| CUT <id>.">>},R,S};
+   {reply, {text,<<"N2O <user>\n| SEND <user> <msg>\n| BOX\n| CUT <id>.">>},R,S};
 
 info({text,<<"CUT",X/binary>>},R,#cx{session = From}=S) -> % erase the feed by SEEN command
    C  = string:trim(binary_to_list(X)),
