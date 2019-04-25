@@ -1,3 +1,0 @@
--module(chat_friend).
--include("feature.hrl").
--compile({parse_transform, bert_javascript}).
