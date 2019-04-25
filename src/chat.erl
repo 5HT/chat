@@ -1,5 +1,4 @@
 -module(chat).
--copyright('2014-2019 (c) Synrc Research Center').
 -behaviour(application).
 -behaviour(supervisor).
 -include("message.hrl").
@@ -11,7 +10,7 @@ stop(_)    -> ok.
 start()    -> start(normal,[]).
 port()     -> application:get_env(n2o,port,8042).
 init([])   -> {ok, {{one_for_one, 5, 10}, [ ] }}.
-
+metainfo() -> #schema { name=roster, tables=[#table{name='Message', fields=record_info(fields,'Message')}]}.
 start(_,_) -> X = supervisor:start_link({local,?MODULE},?MODULE,[]),
               syn:init(),
               kvx:join(),
@@ -21,9 +20,3 @@ start(_,_) -> X = supervisor:start_link({local,?MODULE},?MODULE,[]),
                                  sup=?MODULE,state=[],name={server,Pos}})
                 || {{_,_},Pos} <- lists:zip(n2o:ring(),lists:seq(1,length(n2o:ring()))) ],
               X.
-
-metainfo() -> #schema { name=roster, tables=[#table{name='Message',
-                        fields=record_info(fields,'Message')}]}.
-
-key({p2p,From,To}=M) when From < To -> M;
-key({p2p,From,To}) -> {p2p,To,From}.
