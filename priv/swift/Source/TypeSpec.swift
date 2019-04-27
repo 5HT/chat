@@ -1,11 +1,3 @@
-//
-//  Model.swift
-//  Nynja
-//
-//  Created by Anton Makarov on 11.07.2017.
-//  Copyright © 2017 TecSynt Solutions. All rights reserved.
-//
-
 import Foundation
 protocol Parsable { func parse(bert: BertObject) -> Any? }
 
