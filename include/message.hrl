@@ -1,6 +1,5 @@
 -ifndef(MESSAGE_HRL).
 -define(MESSAGE_HRL, true).
--include("feature.hrl").
 
 -type container()     :: chain | cur.
 -type messageType()   :: sys | reply | forward | read | edited | cursor.
@@ -13,9 +12,12 @@
 -record('Ack',          {id    = [] :: [] | integer(),
                          table = [] :: [] | atom() }).
 
+-record('File',         {id       = [] :: binary(),
+                         mime     = <<"text">> :: binary(),
+                         payload  = [] :: binary(),
+                         parentid = [] :: binary()}).
+
 -record('Message',      {id        = [] :: [] | integer(),
-                         next = [],
-                         prev = [],
                          client_id = [] :: [] | binary(),
                          from      = [] :: [] | binary(),
                          to        = [] :: [] | binary(),

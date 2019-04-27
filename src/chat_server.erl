@@ -1,6 +1,7 @@
 -module(chat_server).
 -include("message.hrl").
 -compile(export_all).
+-compile({parse_transform, bert_swift}).
 
 info(#'Message'{to=To,id=Id}=Msg, R, S) ->
    kvx:append(Msg,To),
