@@ -1,11 +1,3 @@
-//
-//  Serializer.swift
-//  NynjaParser
-//
-//  Created by Anton Makarov on 18.07.2017.
-//  Copyright © 2017 TecSynt Solutions. All rights reserved.
-//
-
 import Foundation
 
 func serialize(bert: BertObject?) -> [UInt8]? {
