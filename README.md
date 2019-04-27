@@ -2,7 +2,7 @@ CHAT: Messaging Protocol
 ========================
 [![Build Status](https://travis-ci.org/synrc/chat.svg?branch=master)](https://travis-ci.org/synrc/chat)
 
-TXT CHAT is a simple mail delivery protocol.
+TXT CHAT is a simple mailbox delivery protocol.
 
 Features
 --------
@@ -10,6 +10,7 @@ Features
 * Database Support: FS, MNESIA, ROCKSDB
 * MQ Support: GPROC, SYN
 * Formatters Support: BERT, JSON, TEXT
+* Size: 80 LOC
 
 Intro
 -----
