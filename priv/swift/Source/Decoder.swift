@@ -18,32 +18,32 @@ func parseObject(name: String, body:[Model], tuple: BertTuple) -> AnyObject?
             a_Ack.id = body[0].parse(bert: tuple.elements[1]) as? Int64
             a_Ack.table = body[1].parse(bert: tuple.elements[2]) as? StringAtom
         return a_Ack
-    case "File":
+    case "Bin":
         if body.count != 4 { return nil }
-        let a_File = File()
-            a_File.id = body[0].parse(bert: tuple.elements[1]) as? String
-            a_File.mime = body[1].parse(bert: tuple.elements[2]) as? String
-            a_File.payload = body[2].parse(bert: tuple.elements[3]) as? String
-            a_File.parentid = body[3].parse(bert: tuple.elements[4]) as? String
-        return a_File
-    case "Message":
-        if body.count != 8 { return nil }
-        let a_Message = Message()
-            a_Message.id = body[0].parse(bert: tuple.elements[1]) as? Int64
-            a_Message.client_id = body[1].parse(bert: tuple.elements[2]) as? String
-            a_Message.from = body[2].parse(bert: tuple.elements[3]) as? String
-            a_Message.to = body[3].parse(bert: tuple.elements[4]) as? String
-            a_Message.files = body[4].parse(bert: tuple.elements[5]) as? [File]
-            a_Message.link = body[6].parse(bert: tuple.elements[7]) as? AnyObject
-        return a_Message
-    case "History":
-        if body.count != 5 { return nil }
-        let a_History = History()
-            a_History.feed = body[0].parse(bert: tuple.elements[1]) as? AnyObject
-            a_History.size = body[1].parse(bert: tuple.elements[2]) as? Int64
-            a_History.entity_id = body[2].parse(bert: tuple.elements[3]) as? Int64
-            a_History.data = body[3].parse(bert: tuple.elements[4]) as? Int64
-        return a_History
+        let a_Bin = Bin()
+            a_Bin.id = body[0].parse(bert: tuple.elements[1]) as? String
+            a_Bin.mime = body[1].parse(bert: tuple.elements[2]) as? String
+            a_Bin.payload = body[2].parse(bert: tuple.elements[3]) as? String
+            a_Bin.parentid = body[3].parse(bert: tuple.elements[4]) as? String
+        return a_Bin
+    case "Msg":
+        if body.count != 6 { return nil }
+        let a_Msg = Msg()
+            a_Msg.id = body[0].parse(bert: tuple.elements[1]) as? Int64
+            a_Msg.client_id = body[1].parse(bert: tuple.elements[2]) as? String
+            a_Msg.from = body[2].parse(bert: tuple.elements[3]) as? String
+            a_Msg.to = body[3].parse(bert: tuple.elements[4]) as? String
+            a_Msg.files = body[4].parse(bert: tuple.elements[5]) as? [Bin]
+            a_Msg.type = body[5].parse(bert: tuple.elements[6]) as? StringAtom
+        return a_Msg
+    case "Log":
+        if body.count != 4 { return nil }
+        let a_Log = Log()
+            a_Log.feed = body[0].parse(bert: tuple.elements[1]) as? AnyObject
+            a_Log.id = body[1].parse(bert: tuple.elements[2]) as? Int64
+            a_Log.data = body[2].parse(bert: tuple.elements[3]) as? [Msg]
+            a_Log.length = body[3].parse(bert: tuple.elements[4]) as? Int64
+        return a_Log
     default: return nil
     }
 }

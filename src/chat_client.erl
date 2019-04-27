@@ -17,7 +17,7 @@ info({text,<<"SEND",X/binary>>},R,#cx{session = From}=S) -> % send message
    case string:tokens(string:trim(binary_to_list(X))," ") of
         [To|Rest] ->
            Key = kvx:seq([],[]),
-           Msg = #'Message'{id=Key,from=From,to=To,files=[#'File'{payload=string:join(Rest," ")}]},
+           Msg = #'Msg'{id=Key,from=From,to=To,files=[#'Bin'{payload=string:join(Rest," ")}]},
            Res = case user(To) of
                  false -> <<"ERROR user doesn't exist.">>;
                  true  -> % here is feed consistency happens
@@ -43,7 +43,7 @@ info({text,<<"CUT",X/binary>>},R,#cx{session = From}=S) -> % erase the feed by S
                               {error,_} -> {reply,{text,<<"NOT FOUND ">>},R,S} end;
                                       _ -> {reply,{text,<<"ERROR in request.">>},R,S} end;
 
-info({flush,#'Message'{}=M},R,S)  -> {reply,
+info({flush,#'Msg'{}=M},R,S)  -> {reply,
    {text,<<"NOTIFY ",(list_to_binary(format_msg(M)))/binary>>},R,S};
 
 info(#'Ack'{id=Key}, R,S) -> {reply, {text,<<"ACK ",(bin(Key))/binary>>},R,S};
@@ -52,8 +52,8 @@ info({text,_}, R,S)       -> {reply, {text,<<"Try HELP">>},R,S};
 info(Msg, R,S)            -> {unknown,Msg,R,S}.
 
 bin(Key) -> list_to_binary(io_lib:format("~p",[Key])).
-user(Id) -> case kvx:get(writer,n2o:to_binary(Id)) of {ok,_} -> true; {error,_} -> false end.
-format_msg(#'Message'{id=Id,from=From,to=To,files=Files}) ->
-  P = case Files of [#'File'{payload=X}] -> X; _ -> [] end,
+user(Id) -> case kvx:get(writer,Id) of {ok,_} -> true; {error,_} -> false end.
+format_msg(#'Msg'{id=Id,from=From,to=To,files=Files}) ->
+  P = case Files of [#'Bin'{payload=X}] -> X; _ -> [] end,
   io_lib:format("~s:~s:~s:~s",[From,To,Id,P]).
 

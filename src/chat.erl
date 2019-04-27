@@ -10,7 +10,7 @@ stop(_)    -> ok.
 start()    -> start(normal,[]).
 port()     -> application:get_env(n2o,port,8042).
 init([])   -> {ok, {{one_for_one, 5, 10}, [ ] }}.
-metainfo() -> #schema { name=roster, tables=[#table{name='Message', fields=record_info(fields,'Message')}]}.
+metainfo() -> #schema { name=roster, tables=[#table{name='Msg', fields=record_info(fields,'Msg')}]}.
 start(_,_) -> X = supervisor:start_link({local,?MODULE},?MODULE,[]),
               syn:init(),
               kvx:join(),

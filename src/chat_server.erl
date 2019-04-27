@@ -3,7 +3,7 @@
 -compile(export_all).
 -compile({parse_transform, bert_swift}).
 
-info(#'Message'{to=To,id=Id}=Msg, R, S) ->
+info(#'Msg'{to=To,id=Id}=Msg, R, S) ->
    kvx:append(Msg,To),
    n2o:send({client,To},{flush,Msg}),
    {reply,{binary, #'Ack'{id=Id}},R,S};
